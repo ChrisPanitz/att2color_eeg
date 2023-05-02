@@ -1,0 +1,35 @@
+FREQUENTIST ANOVA
+ANOVA Table (type III tests)
+
+        Effect DFn DFd     F     p p<.05   pes
+1          att   1  23 8.601 0.007     * 0.272
+2          col   1  23 1.571 0.223       0.064
+3         freq   1  23 4.267 0.050       0.156
+4      att:col   1  23 0.060 0.809       0.003
+5     att:freq   1  23 0.336 0.568       0.014
+6     col:freq   1  23 0.347 0.562       0.015
+7 att:col:freq   1  23 0.624 0.438       0.026
+
+
+
+INCLUSION BAYES FACTORS
+Inclusion Bayes Factors (Model Averaged)
+
+                P(prior) P(posterior) Inclusion BF
+att                 0.50         0.80         4.14
+partID              0.99         0.92        0.094
+att:partID          0.99         0.92        0.094
+col:partID          0.99         0.92        0.094
+freq:partID         0.99         0.92        0.094
+att:col:partID      0.99         0.92        0.094
+att:freq:partID     0.99         0.92        0.094
+col:freq:partID     0.99         0.92        0.094
+col                 0.50         0.30        0.430
+freq                0.50         0.52         1.11
+att:col             0.50         0.21        0.269
+att:freq            0.50         0.24        0.316
+col:freq            0.50         0.22        0.290
+att:col:freq        0.50         0.26        0.353
+
+* Compared among: all models
+*    Priors odds: uniform-equal
