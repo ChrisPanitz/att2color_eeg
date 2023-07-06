@@ -2,7 +2,7 @@
 # --- encoding: en_US.UTF-8
 # --- R version: 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
 # --- RStudio version: 2022.12.0
-# --- script version: May 2023
+# --- script version: July 2023
 # --- content: Plot time course and topographies of Hilbert amplitudes to 
 # ---          attended and ignored pictures (across color/gray and driving frequencies)
 
@@ -57,6 +57,12 @@ aggSD$amplitude <- aggSD$amplitude / sqrt(length(levels(dfTimecourse$partID)))
 # ... and add it to the time course data frame
 dfATTvsIGN$sem <- aggSD$amplitude
 
+# load indices of significant time windows according to permutation test
+loadname <- loadname <- paste0(parentFolder, "/output/indicesSigPermClustersAtt.txt")
+indClustAtt <- as.matrix(read.csv(loadname, header = FALSE, sep = ",", skip = 1))
+loadname <- loadname <- paste0(parentFolder, "/output/indicesSigPermClustersDiff.txt")
+indClustDiff <- as.matrix(read.csv(loadname, header = FALSE, sep = ",", skip = 1))
+
 # set minimum and maximum of y axis based on minimum and maximum plotted values
 minY <- floor(min((dfATTvsIGN$amplitude[dfATTvsIGN$time >= plotWinMs[1] & dfATTvsIGN$time <= plotWinMs[2]] -
                        dfATTvsIGN$sem[dfATTvsIGN$time >= plotWinMs[1] & dfATTvsIGN$time <= plotWinMs[2]]) * 
@@ -64,6 +70,8 @@ minY <- floor(min((dfATTvsIGN$amplitude[dfATTvsIGN$time >= plotWinMs[1] & dfATTv
 maxY <- ceiling(max((dfATTvsIGN$amplitude[dfATTvsIGN$time >= plotWinMs[1] & dfATTvsIGN$time <= plotWinMs[2]] +
                        dfATTvsIGN$sem[dfATTvsIGN$time >= plotWinMs[1] & dfATTvsIGN$time <= plotWinMs[2]]) * 
                       10)) / 10
+# make room at bottom for significance bars
+minY <- minY - (maxY-minY)*.10
 
 # plot Grand Average Hilbert time course aggreated across chromaticity and driving frequency conditions
 plotHilbertAgg <- ggplot(dfATTvsIGN) + 
@@ -71,9 +79,9 @@ plotHilbertAgg <- ggplot(dfATTvsIGN) +
   geom_rect(xmin = analysisWinMs[1], xmax = analysisWinMs[2], ymin = minY, ymax = maxY, fill = "gray90") + # marks analysis window
   geom_ribbon(aes(x = time, ymin = amplitude-sem, ymax = amplitude+sem, group = att, fill = att), alpha = .3) + # marks SEM around amplitude
   geom_line(aes(x = time, y = amplitude, group = att, color = att), linewidth = 1.5) + # Hilbert amplitude
-  scale_color_manual(name = "Stimulus Array", labels = c("attended", "ignored"),
+  scale_color_manual(name = "Stimulus Array", labels = c("cued", "uncued"),
                      values = brewer.pal(n = 9, "Blues")[c(8,5)]) + # coloring
-  scale_fill_manual(name = "Stimulus Array", labels = c("attended", "ignored"),
+  scale_fill_manual(name = "Stimulus Array", labels = c("cued", "uncued"),
                     values = brewer.pal(n = 9, "Blues")[c(8,5)]) + # coloring
   scale_x_continuous(name = "Time relative to cue onset (ms)", breaks = seq(-1000,4000,500), limits = plotWinMs) + # x axis
   scale_y_continuous(name = "Amplitude (% rel. to baseline)", expand = c(0,0), limits = c(minY,maxY)) + # y axis
@@ -89,9 +97,42 @@ plotHilbertAgg <- ggplot(dfATTvsIGN) +
     axis.ticks = element_line(color = "black", linewidth = 1),
     axis.text = element_text(color = "black", size = plotFS+1)
   )
+# add bars to indicate signficant time window for cued > baseline
+for (i in 1:dim(indClustAtt)[1]){
+  plotHilbertAgg <- plotHilbertAgg +
+    geom_segment(aes(x = max(plotWinMs[1],unique(time)[indClustAtt[i,1]]),
+                     xend = min(plotWinMs[2],unique(time)[indClustAtt[i,2]]),
+                     y = minY + (maxY-minY)*.04, yend = minY + (maxY-minY)*.04),
+                 color = brewer.pal(n = 9, "Blues")[8], linewidth = 5)
+  # and label it
+  if (i == dim(indClustDiff)[1]){
+    plotHilbertAgg <- plotHilbertAgg +
+      geom_text(aes(label = "cued > baseline ",
+                    x = min(plotWinMs[2],unique(time)[indClustAtt[i,2]]),
+                    y = minY + (maxY-minY)*.04,
+                    hjust = 1), color = "white", size = plotFS - 8)
+  }
+}
+# add bars to indicate signficant time window for cued > uncued
+for (i in 1:dim(indClustDiff)[1]){
+  plotHilbertAgg <- plotHilbertAgg +
+    geom_segment(aes(x = max(plotWinMs[1],unique(time)[indClustDiff[i,1]]),
+                     xend = min(plotWinMs[2],unique(time)[indClustDiff[i,2]]),
+                     y = minY + (maxY-minY)*.10, yend = minY + (maxY-minY)*.10),
+                 color = brewer.pal(n = 9, "Reds")[8], linewidth = 5)
+  # and label it
+  if (i == dim(indClustDiff)[1]){
+    plotHilbertAgg <- plotHilbertAgg +
+      geom_text(aes(label = "cued > uncued ",
+                    x = min(plotWinMs[2],unique(time)[indClustDiff[i,2]]),
+                    y = minY + (maxY-minY)*.10,
+                    hjust = 1), color = "white", size = plotFS - 8)
+  }
+}
 
 
 
+### TOPOGRAPHIES ###
 # load data into data frame for topographies
 loadname <- paste0(parentFolder, "/dataframes/dfHilbertTopos.txt")
 dfTopos <- read.csv(loadname)
@@ -124,7 +165,7 @@ absAmpDiff <- max(abs(c(minAmpDiff,maxAmpDiff)))
 topoAtt <- topoplot(data = dfTopos[dfTopos$att == "att",],
                     contour = FALSE, scaling = 0.05, highlights = highlightChans,
                     grid_res = topoRes, limits = c(-absAmp,absAmp), method = interpMethod) +
-  labs(title = "attended") + # plot title
+  labs(title = "cued") + # plot title
   theme(legend.position = "bottom",
         legend.text = element_text(size = plotFS-2, angle = 0, vjust = .5, face = "plain"),
         plot.title = element_text(hjust = 0.5, size = plotFS+2, face = "bold"))
@@ -145,7 +186,7 @@ topoAtt$guides$fill$nbin <- nrColors
 topoIgn <- topoplot(data = dfTopos[dfTopos$att == "ign",],
                     contour = FALSE, scaling = 0.05, highlights = highlightChans,
                     grid_res = topoRes, limits = c(-absAmp,absAmp), method = interpMethod) +
-  labs(title = "ignored") + # plot title
+  labs(title = "uncued") + # plot title
   theme(legend.position = "bottom",
         legend.text = element_text(size = plotFS-2, angle = 0, vjust = .5),
         plot.title = element_text(hjust = 0.5, size = plotFS+2, face = "bold"))
@@ -181,7 +222,7 @@ topoIgn$data$fill <- fillAll[(topoPoints+1) : (2*topoPoints)]
 topoDiff <- topoplot(data = dfTopos[dfTopos$att == "att",],
                      contour = FALSE, scaling = 0.05, highlights = highlightChans,
                      grid_res = topoRes, limits = c(-absAmpDiff, absAmpDiff), method = interpMethod) +
-  labs(title = "attended - ignored") + # plot title
+  labs(title = "cued - uncued") + # plot title
   theme(legend.position = "bottom",
         legend.text = element_text(size = plotFS-2, angle = 0, vjust = .5),
         plot.title = element_text(hjust = 0.5, size = plotFS+2, face = "bold"))
@@ -214,7 +255,7 @@ topoAtt <- topoAtt + theme(plot.margin = unit(c(20, 0, 0, 0), unit = "pt"),
 topoIgn <- topoIgn + theme(plot.margin = unit(c(20, 0, 0, 0), unit = "pt"),
                            legend.margin = margin(0,0,10,0))
 topoDiff <- topoDiff + theme(plot.margin = unit(c(20, 0, 0, 0), unit = "pt"),
-                             legend.margin = margin(0,0,5,0))
+                             legend.margin = margin(0,0,10,0))
 
 # put plots together
 plotCombined <- ggarrange(plotHilbertAgg,
