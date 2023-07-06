@@ -1,0 +1,72 @@
+FREQUENTIST ANOVA - low EOG z values
+ANOVA Table (type III tests)
+
+        Effect DFn DFd     F     p p<.05      pes
+1          att   1  11 7.654 0.018     * 0.410000
+2          col   1  11 0.004 0.949       0.000391
+3         freq   1  11 2.256 0.161       0.170000
+4      att:col   1  11 1.337 0.272       0.108000
+5     att:freq   1  11 0.140 0.716       0.013000
+6     col:freq   1  11 0.002 0.962       0.000213
+7 att:col:freq   1  11 0.248 0.628       0.022000
+
+
+
+FREQUENTIST ANOVA - high EOG z values
+ANOVA Table (type III tests)
+
+        Effect DFn DFd     F     p p<.05   pes
+1          att   1  11 3.459 0.090       0.239
+2          col   1  11 3.558 0.086       0.244
+3         freq   1  11 2.580 0.137       0.190
+4      att:col   1  11 0.440 0.521       0.038
+5     att:freq   1  11 0.194 0.668       0.017
+6     col:freq   1  11 0.684 0.426       0.059
+7 att:col:freq   1  11 2.485 0.143       0.184
+
+
+
+INCLUSION BAYES FACTORS - low EOG z values
+Inclusion Bayes Factors (Model Averaged)
+
+                P(prior) P(posterior) Inclusion BF
+att                 0.50         0.53         1.14
+partID              0.99         0.74        0.022
+att:partID          0.99         0.74        0.022
+col:partID          0.99         0.74        0.022
+freq:partID         0.99         0.74        0.022
+att:col:partID      0.99         0.74        0.022
+att:freq:partID     0.99         0.74        0.022
+col:freq:partID     0.99         0.74        0.022
+col                 0.50         0.22        0.283
+freq                0.50         0.37        0.591
+att:col             0.50         0.27        0.366
+att:freq            0.50         0.23        0.297
+col:freq            0.50         0.24        0.326
+att:col:freq        0.50         0.21        0.269
+
+* Compared among: all models
+*    Priors odds: uniform-equal
+
+
+INCLUSION BAYES FACTORS - high EOG z values
+Inclusion Bayes Factors (Model Averaged)
+
+                P(prior) P(posterior) Inclusion BF
+att                 0.50         0.55         1.26
+partID              0.99         0.95        0.152
+att:partID          0.99         0.95        0.152
+col:partID          0.99         0.95        0.152
+freq:partID         0.99         0.95        0.152
+att:col:partID      0.99         0.95        0.152
+att:freq:partID     0.99         0.95        0.152
+col:freq:partID     0.99         0.95        0.152
+col                 0.50         0.52         1.08
+freq                0.50         0.33        0.497
+att:col             0.50         0.33        0.496
+att:freq            0.50         0.28        0.393
+col:freq            0.50         0.33        0.493
+att:col:freq        0.50         0.59         1.48
+
+* Compared among: all models
+*    Priors odds: uniform-equalInclusion Bayes Factors (Model Averaged)
