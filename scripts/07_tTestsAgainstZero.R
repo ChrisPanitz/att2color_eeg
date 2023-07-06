@@ -4,13 +4,14 @@
 # --- RStudio version: 2022.12.0
 # --- script version: May 2023
 # --- content: t-tests against zero within all conditions and for aggregated 
-# ---          across all attended and all ignored conditions
+# ---          across all cued and all uncued conditions
 
 
 
 # load required packages
 library(here)
 library(tidyr)
+library(psych)
 library(rstatix)
 library(BayesFactor)
 
@@ -44,75 +45,92 @@ dfCompWide$ign_aggregated <- rowMeans(subset(dfCompWide, select =
                                                c(ign_col_857,ign_col_15,
                                                  ign_gray_857,ign_gray_15)))
 
+# get descriptive stats
+describe(dfCompWide)
 
 
 ### aggregated data: frequentist t-test, Cohen's d, and Bayesian t-test against zero
 # all attended conditions aggregated
-t_test(data = dfCompWide, formula = att_aggregated ~ 1)
+t_test(data = dfCompWide, formula = att_aggregated ~ 1, alternative = "greater")
 cohens_d(data = dfCompWide, formula = att_aggregated ~ 1)
-ttestBF(x = dfCompWide$att_aggregated)
+ttestBF(x = dfCompWide$att_aggregated, nullInterval = c(0,Inf))
 
 # all ignored conditions aggregated
-t_test(data = dfCompWide, formula = ign_aggregated ~ 1)
+t_test(data = dfCompWide, formula = ign_aggregated ~ 1, alternative = "less")
 cohens_d(data = dfCompWide, formula = ign_aggregated ~ 1)
-ttestBF(x = dfCompWide$ign_aggregated)
+ttestBF(x = dfCompWide$ign_aggregated, nullInterval = c(-Inf,0))
 
 
 
 ### within conditions: frequentist t-test, Cohen's d, and Bayesian t-test against zero
+# express condition as one variable (easier for multiple comparisons)
+dfCompUnited <- unite(dfComp,"cond",col,freq,sep = "_")
+
+# conduct t-tests for cued > baseline with Bonferroni-Holm correction
+tTestsAtt <- t_test(data = group_by(dfCompUnited[dfCompUnited$att == "att",],cond),
+                    formula = amplitude ~ 1, alternative = "greater")
+tTestsAtt$p.adj <- p.adjust(tTestsAtt$p, method = "holm")
+tTestsAtt
+
+# conduct t-tests for uncued < baseline with Bonferroni-Holm correction
+tTestsIgn <- t_test(data = group_by(dfCompUnited[dfCompUnited$att == "ign",],cond),
+                    formula = amplitude ~ 1, alternative = "less")
+tTestsIgn$p.adj <- p.adjust(tTestsIgn$p, method = "holm")
+tTestsIgn
+
+# compute Cohen's d & Bayesian t-tests
 # attending color at 8.57 Hz
-t_test(data = dfComp[dfComp$col == "col" & dfComp$freq == "857" & dfComp$att == "att",],
-       formula = amplitude ~ 1)
 cohens_d(data = dfComp[dfComp$col == "col" & dfComp$freq == "857" & dfComp$att == "att",],
          formula = amplitude ~ 1)
-ttestBF(x = dfCompWide$att_col_857)
+ttestBF(x = dfCompWide$att_col_857, nullInterval = c(0,Inf))
 
 # attending color at 15 Hz
-t_test(data = dfComp[dfComp$col == "col" & dfComp$freq == "15" & dfComp$att == "att",],
-       formula = amplitude ~ 1)
 cohens_d(data = dfComp[dfComp$col == "col" & dfComp$freq == "15" & dfComp$att == "att",],
          formula = amplitude ~ 1)
-ttestBF(x = dfCompWide$att_col_15)
+ttestBF(x = dfCompWide$att_col_15, nullInterval = c(0,Inf))
 
 # attending grayscale at 8.57 Hz
-t_test(data = dfComp[dfComp$col == "gray" & dfComp$freq == "857" & dfComp$att == "att",],
-       formula = amplitude ~ 1)
 cohens_d(data = dfComp[dfComp$col == "gray" & dfComp$freq == "857" & dfComp$att == "att",],
          formula = amplitude ~ 1)
-ttestBF(x = dfCompWide$att_gray_857)
+ttestBF(x = dfCompWide$att_gray_857, nullInterval = c(0,Inf))
 
 # attending grayscale at 15 Hz
-t_test(data = dfComp[dfComp$col == "gray" & dfComp$freq == "15" & dfComp$att == "att",],
-       formula = amplitude ~ 1)
 cohens_d(data = dfComp[dfComp$col == "gray" & dfComp$freq == "15" & dfComp$att == "att",],
          formula = amplitude ~ 1)
-ttestBF(x = dfCompWide$att_gray_15)
+ttestBF(x = dfCompWide$att_gray_15, nullInterval = c(0,Inf))
 
 
 # ignoring color at 8.57 Hz
-t_test(data = dfComp[dfComp$col == "col" & dfComp$freq == "857" & dfComp$att == "ign",],
-       formula = amplitude ~ 1)
 cohens_d(data = dfComp[dfComp$col == "col" & dfComp$freq == "857" & dfComp$att == "ign",],
          formula = amplitude ~ 1)
-ttestBF(x = dfCompWide$ign_col_857)
+ttestBF(x = dfCompWide$ign_col_857, nullInterval = c(-Inf,0))
 
 # ignoring color at 15 Hz
-t_test(data = dfComp[dfComp$col == "col" & dfComp$freq == "15" & dfComp$att == "ign",],
-       formula = amplitude ~ 1)
 cohens_d(data = dfComp[dfComp$col == "col" & dfComp$freq == "15" & dfComp$att == "ign",],
          formula = amplitude ~ 1)
-ttestBF(x = dfCompWide$ign_col_15)
+ttestBF(x = dfCompWide$ign_col_15, nullInterval = c(-Inf,0))
 
 # ignoring grayscale at 8.57 Hz
-t_test(data = dfComp[dfComp$col == "gray" & dfComp$freq == "857" & dfComp$att == "ign",],
-       formula = amplitude ~ 1)
 cohens_d(data = dfComp[dfComp$col == "gray" & dfComp$freq == "857" & dfComp$att == "ign",],
          formula = amplitude ~ 1)
-ttestBF(x = dfCompWide$ign_gray_857)
+ttestBF(x = dfCompWide$ign_gray_857, nullInterval = c(-Inf,0))
 
 # ignoring grayscale at 15 Hz
-t_test(data = dfComp[dfComp$col == "gray" & dfComp$freq == "15" & dfComp$att == "ign",],
-       formula = amplitude ~ 1)
 cohens_d(data = dfComp[dfComp$col == "gray" & dfComp$freq == "15" & dfComp$att == "ign",],
          formula = amplitude ~ 1)
-ttestBF(x = dfCompWide$ign_gray_15)
+ttestBF(x = dfCompWide$ign_gray_15, nullInterval = c(-Inf,0))
+
+
+
+# ### non-parametric alternative
+# # conduct t-tests for cued > baseline with Bonferroni-Holm correction
+# WilcoxonAtt <- wilcox_test(data = group_by(dfCompUnited[dfCompUnited$att == "att",],cond),
+#                            formula = amplitude ~ 1, alternative = "greater")
+# WilcoxonAtt$p.adj <- p.adjust(WilcoxonAtt$p, method = "holm")
+# WilcoxonAtt
+# 
+# # conduct t-tests for uncued < baseline with Bonferroni-Holm correction
+# WilcoxonIgn <- wilcox_test(data = group_by(dfCompUnited[dfCompUnited$att == "ign",],cond),
+#                            formula = amplitude ~ 1, alternative = "less")
+# WilcoxonIgn$p.adj <- p.adjust(WilcoxonIgn$p, method = "holm")
+# WilcoxonIgn
