@@ -75,7 +75,7 @@ plot_col_857 <- ggplot(data = dfMeans[dfMeans$col == "col" & dfMeans$freq == "85
   scale_fill_manual(values = brewer.pal(n = 5, name = "Reds")[c(5,5)]) +
   scale_alpha_manual(values = c(0.60,0.30)) +
   # axes and title
-  scale_x_discrete(labels = c("attended", "ignored")) +
+  scale_x_discrete(labels = c("cued", "uncued")) +
   scale_y_continuous(name = "ssVEP amplitude (% change)", limits = c(min857, max857), breaks = seq(minTick857,maxTick857,tickDist)) +
   labs(title = "Color Pictures at 8.57 Hz") +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"),
@@ -111,7 +111,7 @@ plot_col_15 <- ggplot(data = dfMeans[dfMeans$col == "col" & dfMeans$freq == "15"
   scale_fill_manual(values = brewer.pal(n = 5, name = "Reds")[c(5,5)]) +
   scale_alpha_manual(values = c(0.60,0.20)) +
   # axes and title
-  scale_x_discrete(labels = c("attended", "ignored")) +
+  scale_x_discrete(labels = c("cued", "uncued")) +
   scale_y_continuous(name = "ssVEP amplitude (% change)", limits = c(min15, max15), breaks = seq(minTick15,maxTick15,tickDist)) +
   labs(title = "Color Pictures at 15 Hz") +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"),
@@ -147,7 +147,7 @@ plot_gray_857 <- ggplot(data = dfMeans[dfMeans$col == "gray" & dfMeans$freq == "
   scale_fill_manual(values = c("black","black")) +
   scale_alpha_manual(values = c(0.60,0.20)) +
   # axes and title
-  scale_x_discrete(labels = c("attended", "ignored")) +
+  scale_x_discrete(labels = c("cued", "uncued")) +
   scale_y_continuous(name = "ssVEP amplitude (% change)", limits = c(min857, max857), breaks = seq(minTick857,maxTick857,tickDist)) +
   labs(title = "Grayscale Pictures at 8.57 Hz") +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"),
@@ -183,7 +183,7 @@ plot_gray_15 <- ggplot(data = dfMeans[dfMeans$col == "gray" & dfMeans$freq == "1
   scale_fill_manual(values = c("black","black")) +
   scale_alpha_manual(values = c(0.60,0.20)) +
   # axes and title
-  scale_x_discrete(labels = c("attended", "ignored")) +
+  scale_x_discrete(labels = c("cued", "uncued")) +
   scale_y_continuous(name = "ssVEP amplitude (% change)", limits = c(min15, max15), breaks = seq(minTick15,maxTick15,tickDist)) +
   labs(title = "Grayscale Pictures at 15 Hz") +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"),
