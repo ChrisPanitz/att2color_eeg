@@ -77,7 +77,7 @@ plot_col_857 <- ggplot(data = dfMeans[dfMeans$col == "col" & dfMeans$freq == "85
   # axes and title
   scale_x_discrete(labels = c("cued", "uncued")) +
   scale_y_continuous(name = "ssVEP amplitude (% change)", limits = c(min857, max857), breaks = seq(minTick857,maxTick857,tickDist)) +
-  labs(title = "Color Pictures at 8.57 Hz") +
+  labs(title = "Colour Pictures at 8.57 Hz") +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"),
         legend.position = "none",
         axis.title.x = element_blank(),
@@ -113,7 +113,7 @@ plot_col_15 <- ggplot(data = dfMeans[dfMeans$col == "col" & dfMeans$freq == "15"
   # axes and title
   scale_x_discrete(labels = c("cued", "uncued")) +
   scale_y_continuous(name = "ssVEP amplitude (% change)", limits = c(min15, max15), breaks = seq(minTick15,maxTick15,tickDist)) +
-  labs(title = "Color Pictures at 15 Hz") +
+  labs(title = "Colour Pictures at 15 Hz") +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"),
         legend.position = "none",
         axis.title.x = element_blank(),
@@ -149,7 +149,7 @@ plot_gray_857 <- ggplot(data = dfMeans[dfMeans$col == "gray" & dfMeans$freq == "
   # axes and title
   scale_x_discrete(labels = c("cued", "uncued")) +
   scale_y_continuous(name = "ssVEP amplitude (% change)", limits = c(min857, max857), breaks = seq(minTick857,maxTick857,tickDist)) +
-  labs(title = "Grayscale Pictures at 8.57 Hz") +
+  labs(title = "Greyscale Pictures at 8.57 Hz") +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"),
         legend.position = "none",
         axis.title.x = element_blank(),
@@ -185,7 +185,7 @@ plot_gray_15 <- ggplot(data = dfMeans[dfMeans$col == "gray" & dfMeans$freq == "1
   # axes and title
   scale_x_discrete(labels = c("cued", "uncued")) +
   scale_y_continuous(name = "ssVEP amplitude (% change)", limits = c(min15, max15), breaks = seq(minTick15,maxTick15,tickDist)) +
-  labs(title = "Grayscale Pictures at 15 Hz") +
+  labs(title = "Greyscale Pictures at 15 Hz") +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"),
         legend.position = "none",
         axis.title.x = element_blank(),
